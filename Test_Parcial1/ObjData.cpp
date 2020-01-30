@@ -11,6 +11,19 @@ ObjData::ObjData()
 
 ObjData::~ObjData()
 {
+	delete[]m_vertexData;
+	delete[]m_normalData;
+	delete[]m_UVData; 
+	delete[]m_vertexID;
+	delete[]m_normalID;
+	delete[]m_UVID;
+
+	m_vertexData = nullptr;
+	m_normalData = nullptr;
+	m_UVData = nullptr;
+	m_vertexID = nullptr;
+	m_normalID = nullptr;
+	m_UVID = nullptr;
 }
 
 bool ObjData::importData(const char * filename) // Comprobar que sea archivo valido, llenar la informacion y regresar true
@@ -131,7 +144,9 @@ bool ObjData::importData(const char * filename) // Comprobar que sea archivo val
 		}
 		
 	}
-
+	
+	if (bDone) { cout << "Data loaded." << endl; }
+	if (saveData(filename)) { cout << "Data saved in a .txt file" << endl; }
 	ist.close();
 	delete[] ptrString;
 	ptrString = nullptr;
@@ -143,7 +158,7 @@ ostream& operator<<(ostream& os, const ObjData& e)
 	os << "Vertex [ " << e.m_numVertex << " ]" << endl;
 	for (size_t i = 0; i < e.m_numVertex; i++)
 	{
-		os << "[" << i << "]\t" << e.m_vertexData[3 * i] << "\t" << e.m_vertexData[(3 * i) + 1] << "\t" << e.m_vertexData[(3 * i) + 2] << endl;;
+		os << "[" << i << "]\t" << e.m_vertexData[3 * i] << "\t" << e.m_vertexData[(3 * i) + 1] << "\t" << e.m_vertexData[(3 * i) + 2] << endl;
 	}
 
 	os << "\n";
@@ -151,7 +166,7 @@ ostream& operator<<(ostream& os, const ObjData& e)
 	os << "Normals [ " << e.m_numNormals << " ]" << endl;
 	for (size_t i = 0; i < e.m_numNormals; i++)
 	{
-		os << "[" << i << "]\t" << e.m_normalData[3 * i] << "\t" << e.m_normalData[(3 * i) + 1] << "\t" << e.m_normalData[(3 * i) + 2] << endl;;
+		os << "[" << i << "]\t" << e.m_normalData[3 * i] << "\t" << e.m_normalData[(3 * i) + 1] << "\t" << e.m_normalData[(3 * i) + 2] << endl;
 	}
 
 	os << "\n";
@@ -159,7 +174,7 @@ ostream& operator<<(ostream& os, const ObjData& e)
 	os << "UVs [ " << e.m_numUVs << " ]" << endl;
 	for (size_t i = 0; i < e.m_numUVs; i++)
 	{
-		os << "[" << i << "]\t" << e.m_UVData[3 * i] << "\t" << e.m_UVData[(3 * i) + 1] << "\t" << e.m_UVData[(3 * i) + 2] << endl;;
+		os << "[" << i << "]\t" << e.m_UVData[3 * i] << "\t" << e.m_UVData[(3 * i) + 1] << "\t" << e.m_UVData[(3 * i) + 2] << endl;
 	}
 
 	os << "\n";
@@ -167,11 +182,55 @@ ostream& operator<<(ostream& os, const ObjData& e)
 	os << "Tris [ " << e.m_numTris << " ]" << endl;
 	for (size_t i = 0; i < e.m_numTris; i++)
 	{
-		os << "[" << i << "]\t" << e.m_vertexID[3 * i] << "\t" << e.m_vertexID[(3 * i) + 1] << "\t" << e.m_vertexID[(3 * i) + 2] << endl;;
-		os << "[" << i << "]\t" << e.m_normalID[3 * i] << "\t" << e.m_normalID[(3 * i) + 1] << "\t" << e.m_normalID[(3 * i) + 2] << endl;;
-		os << "[" << i << "]\t" << e.m_UVID[3 * i] << "\t" << e.m_UVID[(3 * i) + 1] << "\t" << e.m_UVID[(3 * i) + 2] << endl;;
+		os << "[" << i << "]\t" << e.m_vertexID[3 * i] << "\t" << e.m_vertexID[(3 * i) + 1] << "\t" << e.m_vertexID[(3 * i) + 2] << endl;
+		os << "[" << i << "]\t" << e.m_normalID[3 * i] << "\t" << e.m_normalID[(3 * i) + 1] << "\t" << e.m_normalID[(3 * i) + 2] << endl;
+		os << "[" << i << "]\t" << e.m_UVID[3 * i] << "\t" << e.m_UVID[(3 * i) + 1] << "\t" << e.m_UVID[(3 * i) + 2] << endl;
 		os << endl;
 	}
 
 	return os;
+}
+
+bool ObjData::saveData(const char * filename)
+{
+	bool bSaved = true;
+	string outFileName = (string)filename + ".DATA.txt";
+	ofstream ost{ outFileName };
+	if (!ost)cout << "Couldn't create file." << endl; bSaved = false;
+
+	ost << "Vertex [ " << m_numVertex << " ]" << endl;
+	for (size_t i = 0; i < m_numVertex; i++)
+	{
+		ost << "[" << i << "]\t" << m_vertexData[3 * i] << "\t" << m_vertexData[(3 * i) + 1] << "\t" << m_vertexData[(3 * i) + 2] << endl;
+	}
+
+	ost << "\n";
+
+	ost << "Normals [ " << m_numNormals << " ]" << endl;
+	for (size_t i = 0; i < m_numNormals; i++)
+	{
+		ost << "[" << i << "]\t" << m_normalData[3 * i] << "\t" << m_normalData[(3 * i) + 1] << "\t" << m_normalData[(3 * i) + 2] << endl;
+	}
+
+	ost << "\n";
+
+	ost << "UVs [ " << m_numUVs << " ]" << endl;
+	for (size_t i = 0; i < m_numUVs; i++)
+	{
+		ost << "[" << i << "]\t" << m_UVData[3 * i] << "\t" << m_UVData[(3 * i) + 1] << "\t" << m_UVData[(3 * i) + 2] << endl;
+	}
+
+	ost << "\n";
+
+	ost << "Tris [ " << m_numTris << " ]" << endl;
+	for (size_t i = 0; i < m_numTris; i++)
+	{
+		ost << "[" << i << "]\t" << m_vertexID[3 * i] << "\t" << m_vertexID[(3 * i) + 1] << "\t" << m_vertexID[(3 * i) + 2] << endl;
+		ost << "[" << i << "]\t" << m_normalID[3 * i] << "\t" << m_normalID[(3 * i) + 1] << "\t" << m_normalID[(3 * i) + 2] << endl;
+		ost << "[" << i << "]\t" << m_UVID[3 * i] << "\t" << m_UVID[(3 * i) + 1] << "\t" << m_UVID[(3 * i) + 2] << endl;
+		ost << endl;
+	}
+
+	ost.close();
+	return bSaved;
 }

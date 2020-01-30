@@ -24,5 +24,8 @@ public:
 	bool importData(const char * filename); // Comprobar que sea archivo valido, llenar la informacion y regresar true
 	friend ostream& operator<<(ostream& os, const ObjData& e);
 	~ObjData();
+
+private:
+	bool saveData(const char * filename);
 };
 
